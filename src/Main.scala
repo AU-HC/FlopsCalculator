@@ -1,6 +1,6 @@
 object Main {
   sealed abstract class Matrix
-  case class MatrixImpl(row: Int, column: Int) extends Matrix {
+  case class MatrixImpl(row: Int, column: Int, id: String) extends Matrix {
     def getRow: Int = {
       row
     }
@@ -23,9 +23,9 @@ object Main {
 
 
   def main(array: Array[String]): Unit = {
-    val x = MatrixImpl(10, 1000)
-    val y = MatrixImpl(10, 1000)
-    val z = MatrixImpl(10, 1000)
+    val x = MatrixImpl(10, 1000, "X")
+    val y = MatrixImpl(10, 1000, "Y")
+    val z = MatrixImpl(10, 1000, "Z")
 
     // (X+(Y+Z))*2
     printAmountOfOperations(ScalarOp(BinOp(x, MatrixSum, BinOp(y, MatrixSum, z)), 2))
@@ -81,7 +81,7 @@ object Main {
           val amountOfOperations = (2 * amountOfRowsInAMatrix * amountOfColumnsInAMatrix * amountOfColumnsInBMatrix) + currentAmountOfOperations
           (???, amountOfOperations)
       }
-    case ScalarOp(x, y) =>
+    case ScalarOp(x, _) =>
       val xMatrix = calculate(x)
 
       // finding current amount of operations
@@ -89,8 +89,8 @@ object Main {
       val amountOfOperations = (xMatrix._1.getRow * xMatrix._1.getColumn) + currentAmountOfOperations;
 
       (xMatrix._1, amountOfOperations)
-    case MatrixImpl(row, column) =>
-      (MatrixImpl(row, column), 0)
+    case MatrixImpl(row, column, id) =>
+      (MatrixImpl(row, column, id), 0)
   }
 
   def getPreviousCost(x: (MatrixImpl, Int), y:(MatrixImpl, Int)): Int = {
