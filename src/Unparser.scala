@@ -8,7 +8,6 @@ object Unparser {
 
     // (X+(Y+Z))*2
     print(unparse(ScalarOp(BinOp(x, MatrixSum, BinOp(y, MatrixSum, z)), 2)))
-
   }
 
   def unparse(x: Matrix): String = x match {

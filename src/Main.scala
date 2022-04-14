@@ -1,3 +1,5 @@
+import Unparser.unparse
+
 object Main {
   sealed abstract class Matrix
   case class MatrixImpl(row: Int, column: Int, id: String) extends Matrix {
@@ -33,7 +35,19 @@ object Main {
   }
 
   def printAmountOfOperations(x: Matrix): Unit = {
-    println(calculate(x)._2)
+    println("----------------------------------------------------------------------")
+    println(s"The following expression has been evaluated: ${unparse(x)}")
+
+    try {
+      val evaluated = calculate(x)
+      println(s"Total amount of flops used: ${evaluated._2}")
+    }
+    catch {
+      case OperationError(msg, matrix) => println(s"$msg at matrix $matrix")
+      case _ => println("unknown error")
+    }
+
+    println("----------------------------------------------------------------------")
   }
 
 
