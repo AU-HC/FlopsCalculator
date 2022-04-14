@@ -27,6 +27,7 @@ object Main {
     val y = MatrixImpl(10, 1000)
     val z = MatrixImpl(10, 1000)
 
+    // (X+(Y+Z))*2
     printAmountOfOperations(ScalarOp(BinOp(x, MatrixSum, BinOp(y, MatrixSum, z)), 2))
 
   }
