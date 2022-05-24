@@ -15,9 +15,6 @@ object Unparser {
       val leftMatrix = unparse(x)
       val rightMatrix = unparse(y)
       op match {
-        case VectorSum => s"($leftMatrix+$rightMatrix)"
-        case RowColumnProduct => ???
-        case OuterProduct => ???
         case MatrixSum => s"($leftMatrix+$rightMatrix)"
         case MatrixProduct => s"($leftMatrix$rightMatrix)"
       }

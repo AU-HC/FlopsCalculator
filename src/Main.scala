@@ -9,14 +9,14 @@ object Main {
     def getColumn: Int = {
       column
     }
+    def getId: String = {
+      id
+    }
   }
 
   sealed abstract class Operation
   sealed abstract class BinOperation extends Operation
 
-  case object VectorSum extends BinOperation
-  case object RowColumnProduct extends BinOperation
-  case object OuterProduct extends BinOperation
   case object MatrixSum extends BinOperation
   case object MatrixProduct extends BinOperation
 
@@ -61,16 +61,6 @@ object Main {
 
       // matching the operand
       op match {
-        case VectorSum =>
-          // checking if the operation is legal
-          val notSameAmountOfRows = xMatrix._1.getRow != yMatrix._1.getRow;
-          if (notSameAmountOfRows) throw OperationError("The vectors does not have the same amount of rows, cannot calculate VectorSum", x)
-
-          // getting amount of operations + previous operations
-          val amountOfOperations = xMatrix._1.getColumn + currentAmountOfOperations
-          (xMatrix._1, amountOfOperations)
-        case RowColumnProduct => ???
-        case OuterProduct => ???
         case MatrixSum =>
           // checking if the operation is legal
           val notSameAmountOfRows = xMatrix._1.getRow != yMatrix._1.getRow;
@@ -93,7 +83,7 @@ object Main {
           if (operationIsIllegal) throw OperationError("The amount of columns in A does not equal amount of rows in B, cannot calculate MatrixProduct", x)
 
           val amountOfOperations = (2 * amountOfRowsInAMatrix * amountOfColumnsInAMatrix * amountOfColumnsInBMatrix) + currentAmountOfOperations
-          (MatrixImpl(amountOfRowsInAMatrix, amountOfColumnsInBMatrix, "?"), amountOfOperations)
+          (MatrixImpl(amountOfRowsInAMatrix, amountOfColumnsInBMatrix, ""), amountOfOperations)
       }
     case ScalarOp(x, _) =>
       val xMatrix = calculate(x)
