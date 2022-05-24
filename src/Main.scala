@@ -1,6 +1,9 @@
 import Unparser.unparse
 
 object Main {
+  val locale = new java.util.Locale("de", "DE");
+  val formatter = java.text.NumberFormat.getIntegerInstance(locale)
+
   sealed abstract class Matrix
   case class MatrixImpl(row: Int, column: Int, id: String) extends Matrix {
     def getRow: Int = {
@@ -40,7 +43,7 @@ object Main {
 
     try {
       val evaluated = calculate(x)
-      println(s"Total amount of flops used: ${evaluated._2}")
+      println(s"Total amount of flops used: ${formatter.format(evaluated._2)}")
     }
     catch {
       case OperationError(msg, matrix) => println(s"$msg at matrix $matrix")
