@@ -25,12 +25,12 @@ object Main {
 
 
   def main(array: Array[String]): Unit = {
-    val x = MatrixImpl(10, 1000, "X")
-    val y = MatrixImpl(10, 1000, "Y")
-    val z = MatrixImpl(10, 1000, "Z")
+    val a = MatrixImpl(5, 1000, "A")
+    val b = MatrixImpl(1000, 200, "B")
+    val c = MatrixImpl(1000, 200, "C")
 
-    // (X+(Y+Z))*2
-    printAmountOfOperations(ScalarOp(BinOp(x, MatrixSum, BinOp(y, MatrixSum, z)), 2))
+    printAmountOfOperations(BinOp(a, MatrixProduct, BinOp(b, MatrixSum, c)))
+    printAmountOfOperations(BinOp(BinOp(a, MatrixProduct, b), MatrixSum, BinOp(a, MatrixProduct, c)))
 
   }
 
@@ -52,9 +52,9 @@ object Main {
 
 
   def calculate(x: Matrix): (MatrixImpl, Int) = x match {
-    case BinOp(x, op, y) =>
-      val xMatrix = calculate(x)
-      val yMatrix = calculate(y)
+    case BinOp(leftMatrix, op, rightMatrix) =>
+      val xMatrix = calculate(leftMatrix)
+      val yMatrix = calculate(rightMatrix)
 
       // finding current amount of operations
       val currentAmountOfOperations = getPreviousCost(xMatrix, yMatrix)
@@ -93,7 +93,7 @@ object Main {
           if (operationIsIllegal) throw OperationError("The amount of columns in A does not equal amount of rows in B, cannot calculate MatrixProduct", x)
 
           val amountOfOperations = (2 * amountOfRowsInAMatrix * amountOfColumnsInAMatrix * amountOfColumnsInBMatrix) + currentAmountOfOperations
-          (???, amountOfOperations)
+          (MatrixImpl(amountOfRowsInAMatrix, amountOfColumnsInBMatrix, "?"), amountOfOperations)
       }
     case ScalarOp(x, _) =>
       val xMatrix = calculate(x)
