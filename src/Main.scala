@@ -34,7 +34,6 @@ object Main {
 
     printAmountOfOperations(BinOp(a, MatrixProduct, BinOp(b, MatrixSum, c)))
     printAmountOfOperations(BinOp(BinOp(a, MatrixProduct, b), MatrixSum, BinOp(a, MatrixProduct, c)))
-
   }
 
   def printAmountOfOperations(x: Matrix): Unit = {
