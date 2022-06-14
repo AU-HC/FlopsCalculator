@@ -30,19 +30,19 @@ object Main {
   def main(array: Array[String]): Unit = {
     val a = MatrixImpl(5, 1000, "A")
     val b = MatrixImpl(1000, 200, "B")
-    val c = MatrixImpl(1000, 200, "C")
+    val c = MatrixImpl(200, 10, "C")
 
-    printAmountOfOperations(BinOp(a, MatrixProduct, BinOp(b, MatrixSum, c)))
-    printAmountOfOperations(BinOp(BinOp(a, MatrixProduct, b), MatrixSum, BinOp(a, MatrixProduct, c)))
+    printAmountOfOperations(BinOp(a, MatrixProduct, BinOp(b, MatrixProduct, c)))
+    printAmountOfOperations(BinOp(BinOp(a, MatrixProduct, b), MatrixProduct, c))
   }
 
   def printAmountOfOperations(x: Matrix): Unit = {
-    println("----------------------------------------------------------------------")
     println(s"The following expression has been evaluated: ${unparse(x)}")
 
     try {
       val evaluated = calculate(x)
-      println(s"Total amount of flops used: ${formatter.format(evaluated._2)}")
+      println(s"Total amount of flops used: \n" +
+        s"${evaluated._3} = ${formatter.format(evaluated._2)}")
     }
     catch {
       case OperationError(msg, matrix) => println(s"$msg at matrix $matrix")
@@ -53,7 +53,7 @@ object Main {
   }
 
 
-  def calculate(x: Matrix): (MatrixImpl, Int) = x match {
+  def calculate(x: Matrix): (MatrixImpl, Int, String) = x match {
     case BinOp(leftMatrix, op, rightMatrix) =>
       val xMatrix = calculate(leftMatrix)
       val yMatrix = calculate(rightMatrix)
@@ -73,7 +73,7 @@ object Main {
           val row = xMatrix._1.getRow
           val column = xMatrix._1.getColumn
           val amountOfOperations = (row * column) + currentAmountOfOperations
-          (xMatrix._1, amountOfOperations)
+          (xMatrix._1, amountOfOperations, s"$row * $column + ${xMatrix._3} +${yMatrix._3}")
         case MatrixProduct =>
           // checking if the operation is legal
           val amountOfRowsInAMatrix = xMatrix._1.getRow        // m
@@ -85,7 +85,8 @@ object Main {
           if (operationIsIllegal) throw OperationError("The amount of columns in A does not equal amount of rows in B, cannot calculate MatrixProduct", x)
 
           val amountOfOperations = (2 * amountOfRowsInAMatrix * amountOfColumnsInAMatrix * amountOfColumnsInBMatrix) + currentAmountOfOperations
-          (MatrixImpl(amountOfRowsInAMatrix, amountOfColumnsInBMatrix, ""), amountOfOperations)
+
+          (MatrixImpl(amountOfRowsInAMatrix, amountOfColumnsInBMatrix, ""), amountOfOperations, s"(2 * $amountOfRowsInAMatrix * $amountOfColumnsInAMatrix * $amountOfColumnsInBMatrix) + ${xMatrix._3} + ${yMatrix._3}")
       }
     case ScalarOp(x, _) =>
       val xMatrix = calculate(x)
@@ -93,13 +94,14 @@ object Main {
       // finding current amount of operations
       val currentAmountOfOperations = xMatrix._2
       val amountOfOperations = (xMatrix._1.getRow * xMatrix._1.getColumn) + currentAmountOfOperations;
+      val currentAmountOfOperationsString = if (currentAmountOfOperations == 0) "" else s"+${xMatrix._3}"
 
-      (xMatrix._1, amountOfOperations)
+      (xMatrix._1, amountOfOperations, s"(${xMatrix._1.getRow} * ${xMatrix._1.getColumn}) + $currentAmountOfOperations")
     case MatrixImpl(row, column, id) =>
-      (MatrixImpl(row, column, id), 0)
+      (MatrixImpl(row, column, id), 0, "0")
   }
 
-  def getPreviousCost(x: (MatrixImpl, Int), y:(MatrixImpl, Int)): Int = {
+  def getPreviousCost(x: (MatrixImpl, Int, String), y:(MatrixImpl, Int, String)): Int = {
     x._2 + y._2
   }
 
